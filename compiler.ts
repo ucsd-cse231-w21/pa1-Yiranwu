@@ -46,6 +46,22 @@ function codeGen(stmt: Stmt) : Array<string> {
 
 function codeGenExpr(expr : Expr) : Array<string> {
   switch(expr.tag) {
+    case "binexpr":
+      const v1Stmts = codeGenExpr(expr.value1);
+      const v2Stmts = codeGenExpr(expr.value2);
+      switch(expr.op) {
+        case "+":
+          return v1Stmts.concat(v2Stmts.concat([`(i32.add)`]));
+        case "-":
+          return v1Stmts.concat(v2Stmts.concat([`(i32.sub)`]));
+        case "*":
+          return v1Stmts.concat(v2Stmts.concat([`(i32.mul)`]));
+      }
+      return v1Stmts.concat(v2Stmts.concat([`(binexpr err!)`]))
+    case "buildin2":
+      const arg1Stmts = codeGenExpr(expr.arg1);
+      const arg2Stmts = codeGenExpr(expr.arg2);
+      return arg1Stmts.concat(arg2Stmts.concat([`(call $${expr.name})`]))
     case "builtin1":
       const argStmts = codeGenExpr(expr.arg);
       return argStmts.concat([`(call $${expr.name})`]);

@@ -12,6 +12,18 @@ function webStart() {
           elt.innerText = arg;
           return arg;
         },
+        abs: (arg : any) => {
+          return Math.abs(arg);
+        },
+        max: (arg1: number, arg2: number) => {
+          return Math.max(arg1, arg2)
+        },
+        min: (arg1: number, arg2: number) => {
+          return Math.min(arg1, arg2)
+        },
+        pow: (arg1: number, arg2: number) => {
+          return Math.pow(arg1, arg2)
+        },
       },
     };
 
