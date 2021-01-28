@@ -16,7 +16,7 @@ For example "X:int=100" is {type:"int", value:100} in TS, and "(i32.const 100)" 
 
 
 ## Q2: Data Structures
-I use a class called Scope to store information about the variables and functions in the current scope. Given the name of variable, we are able to find its type and address in WASM memory(to support REPL). Given the name of function, we can find its signature and WASM code implementation(to support REPL).
+I use a class called Scope to store information about the variables and functions in the current scope. Given the name of variable, we are able to find its type (for typechecking) and address in WASM memory(for REPL). Given the name of function, we can find its signature(for typechecking) and WASM code implementation(for REPL).
 ```
 type  VarEntry = {
 
@@ -70,6 +70,11 @@ corresponds to a Scope with variable map
 ```
 scope.vars= ('X', [type: "int", address: 0])
 ```
+
+In WASM runtime, the value of variable X will be stored in variable $X.
+
+To pass value of global variable across runs, we utilize a shared memory. Every global variable will be assigned a unique position in memory. This address lookup table lives in TS. Before each WASM run starts, the formerly defined variables are fetched from memory by referring to its address. Before each run finishes, we update the memory with its current value.
+
 ### Functions
 ```
 def foo(X:int, Y:int) -> bool {
@@ -80,6 +85,9 @@ corresponds to a Scope with function map
 ```
 scope.funcs = ('foo', [type: "bool", argList:["int","int"], source: wasmCodeOfArgAndBody])
 ```
+
+Similar to global variables, we store the WASM code for global functions, and insert former functions before each WASM run.
+
 ### Local variables in function
 ```
 def foo(X:int, Y:int) -> bool {
@@ -93,6 +101,9 @@ outerScope.funcs = ('foo', [type: "bool", argList:["int","int"], source: wasmCod
 innerScope.vars = ('Z', [type: "int", address: 2])
 innerScope.super = outerScope
 ```
+
+We keep a map for all global variables and functions. After each REPL evaluation, the newly defined entities are added to this map. This is done by calling Scope.mergeInto on the outmost Scope. Information in all the inner Scopes are simply discarded.
+
 ## Q3: Infinite loops
 Consider this program
 ```
@@ -178,12 +189,17 @@ N
 ![ScreenShot](images/4-5.png)
 
 ## 4.6 Printing
-My current implementation will not be able to print "True" or "False" for booleans. I can only print 0/1.
+```
+Y:bool=True
+X:int=100
+X
 
-The reason is that, since I store type only in TypeScript, when I call print from WASM side, I have no idea about the type of the variable.
-
-There's many workaround for this, e.g. also storing type information in WASM.
-
+---REPL1---
+print(Y)
+---REPL2---
+print(X)
+```
+![ScreenShot](images/4-6.png)
 
 ## 4.7 Recursive Function
 ```

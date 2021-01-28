@@ -4,3 +4,4 @@ cli
 *.sw*
 *.js
 show*.ts
+.DS_Store

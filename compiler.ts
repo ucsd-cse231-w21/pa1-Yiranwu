@@ -89,10 +89,10 @@ export function compile(source: string, formerEnv: Scope) : CompileResult {
   let varInitCodes:string[] = []
   let funcCodes:string[] = []
   console.log("trying to add former defined vars and funcs")
-  console.log(`former env name: ${formerEnv.name}`)
+  console.log(`former env name: ${formerEnv.name}, nvars=${formerEnv.vars.size}, nfuncs=${formerEnv.funcs.size}`)
   formerEnv.vars.forEach((varEntry, name) => {
     varDefCodes.push(`(local $${name} i32)`)
-    varInitCodes.concat([`(i32.const ${varEntry.address*4})`, `i32.load`, `local.get $${name}`])
+    varInitCodes=varInitCodes.concat([`(i32.const ${varEntry.address*4})`, `(i32.load)`, `(local.set $${name})`])
   })
   formerEnv.funcs.forEach((funcEntry, name) => {
     funcCodes = funcCodes.concat(funcEntry.source)
@@ -128,9 +128,11 @@ export function compile(source: string, formerEnv: Scope) : CompileResult {
 
   myFuncCode = myFuncCode.concat(varDefCodes).concat(varInitCodes)
 
-  const bodyCode = codeGenStmts(program.body, env);
+  console.log(`at env ${env.name}, before codeGenBody, trying to save vars, num=${env.vars.size}`)
+  let bodyCode = codeGenStmts(program.body, env);
+  console.log(`at env ${env.name}, after codeGenBody, trying to save vars, num=${env.vars.size}`)
   env.vars.forEach((varEntry, name) => {
-    bodyCode.concat([`(local.get $${name})`, `(i32.const ${varEntry.address*4})`, `(i32.store)`])
+    bodyCode = bodyCode.concat([`(i32.const ${varEntry.address*4})`, `(local.get $${name})`, `(i32.store)`])
   })
   myFuncCode = myFuncCode.concat(bodyCode);
   console.log("Generated: ", myFuncCode.join("\n"));
@@ -355,6 +357,14 @@ function codeGenExpr(expr : Expr, env:Scope) : Array<string> {
 
     //    | <name>([<expr> [, <expr>]*]?)
     case "callexpr":
+      if (expr.name=='print') {
+        if(expr.args.length>1)
+          throw new Error(`calling print with multiple args, expected 1`)
+        if (expr.args[0].type=='none')
+          throw new Error(`printing none`)
+        const argCode = codeGenExpr(expr.args[0], env)
+        return argCode.concat([`(call $print)`])
+      }
       const func = env.getFunc(expr.name)
       if (func.argList.length != expr.args.length) {
         throw new Error(`calling function ${expr.name} with wrong number of args`)
