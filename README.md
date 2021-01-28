@@ -117,8 +117,7 @@ def foo(X:int) -> int:
 ----REPL----
 foo(5)
 ```
-
-![alt text](https://github.com/ucsd-cse231-w21/pa1-Yiranwu/tree/main/images/4-1.png)
+<img src="https://github.com/ucsd-cse231-w21/pa1-Yiranwu/tree/main/images/4-1.png" alt="drawing" width="200" height=100/>
 
 ## 4.2 REPL calling main, REPL calling REPL
 ```
@@ -134,7 +133,7 @@ def bar(X:int) -> int:    return (foo(X)//2)
 ```
 
 
-![alt text](https://github.com/ucsd-cse231-w21/pa1-Yiranwu/tree/main/images/4-2.png)
+<img src="https://github.com/ucsd-cse231-w21/pa1-Yiranwu/tree/main/images/4-2.png" alt="drawing" width="200" height=100/>
 
 ## 4.3 TypeError for arithmetic op
 ```
@@ -144,7 +143,7 @@ X+Y
 ```
 
 
-![alt text](https://github.com/ucsd-cse231-w21/pa1-Yiranwu/tree/main/images/4-3.png)
+<img src="https://github.com/ucsd-cse231-w21/pa1-Yiranwu/tree/main/images/4-3.png" alt="drawing" width="200" height=100/>
 
 ## 4.4 TypeError for if condition
 ```
@@ -160,7 +159,7 @@ X
 ```
 
 
-![alt text](https://github.com/ucsd-cse231-w21/pa1-Yiranwu/tree/main/images/4-4.png)
+<img src="https://github.com/ucsd-cse231-w21/pa1-Yiranwu/tree/main/images/4-4.png" alt="drawing" width="200" height=100/>
 
 ## 4.5 Calling in a loop
 ```
@@ -177,7 +176,7 @@ N
 ```
 
 
-![alt text](https://github.com/ucsd-cse231-w21/pa1-Yiranwu/tree/main/images/4-5.png)
+<img src="https://github.com/ucsd-cse231-w21/pa1-Yiranwu/tree/main/images/4-5.png" alt="drawing" width="200" height=100/>
 
 ## 4.6 Printing
 My current implementation will not be able to print "True" or "False" for booleans. I can only print 0/1.
@@ -186,8 +185,6 @@ The reason is that, since I store type only in TypeScript, when I call print fro
 
 There's many workaround for this, e.g. also storing type information in WASM.
 
-
-![alt text](https://github.com/ucsd-cse231-w21/pa1-Yiranwu/tree/main/images/4-6.png)
 
 ## 4.7 Recursive Function
 ```
@@ -201,7 +198,7 @@ countDown(10)
 ```
 
 
-![alt text](https://github.com/ucsd-cse231-w21/pa1-Yiranwu/tree/main/images/4-7.png)
+<img src="https://github.com/ucsd-cse231-w21/pa1-Yiranwu/tree/main/images/4-7.png" alt="drawing" width="200" height=100/>
 
 ## 4.8 Mutual calling
 ```
@@ -219,4 +216,4 @@ I:int=15
 countDownOne(I)
 ```
 
-![alt text](https://github.com/ucsd-cse231-w21/pa1-Yiranwu/tree/main/images/4-8.png)
+<img src="https://github.com/ucsd-cse231-w21/pa1-Yiranwu/tree/main/images/4-8.png" alt="drawing" width="200" height=100/>
