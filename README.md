@@ -118,7 +118,7 @@ def foo(X:int) -> int:
 foo(5)
 ```
 
-![plot](https://github.com/ucsd-cse231-w21/pa1-Yiranwu/tree/main/images/4-1.png)
+![alt text](https://github.com/ucsd-cse231-w21/pa1-Yiranwu/tree/main/images/4-1.png)
 
 ## 4.2 REPL calling main, REPL calling REPL
 ```
@@ -134,7 +134,7 @@ def bar(X:int) -> int:    return (foo(X)//2)
 ```
 
 
-![plot](https://github.com/ucsd-cse231-w21/pa1-Yiranwu/tree/main/images/4-2.png)
+![alt text](https://github.com/ucsd-cse231-w21/pa1-Yiranwu/tree/main/images/4-2.png)
 
 ## 4.3 TypeError for arithmetic op
 ```
@@ -144,7 +144,7 @@ X+Y
 ```
 
 
-![plot](https://github.com/ucsd-cse231-w21/pa1-Yiranwu/tree/main/images/4-3.png)
+![alt text](https://github.com/ucsd-cse231-w21/pa1-Yiranwu/tree/main/images/4-3.png)
 
 ## 4.4 TypeError for if condition
 ```
@@ -160,7 +160,7 @@ X
 ```
 
 
-![plot](https://github.com/ucsd-cse231-w21/pa1-Yiranwu/tree/main/images/4-4.png)
+![alt text](https://github.com/ucsd-cse231-w21/pa1-Yiranwu/tree/main/images/4-4.png)
 
 ## 4.5 Calling in a loop
 ```
@@ -177,7 +177,7 @@ N
 ```
 
 
-![plot](https://github.com/ucsd-cse231-w21/pa1-Yiranwu/tree/main/images/4-5.png)
+![alt text](https://github.com/ucsd-cse231-w21/pa1-Yiranwu/tree/main/images/4-5.png)
 
 ## 4.6 Printing
 My current implementation will not be able to print "True" or "False" for booleans. I can only print 0/1.
@@ -187,7 +187,7 @@ The reason is that, since I store type only in TypeScript, when I call print fro
 There's many workaround for this, e.g. also storing type information in WASM.
 
 
-![plot](https://github.com/ucsd-cse231-w21/pa1-Yiranwu/tree/main/images/4-6.png)
+![alt text](https://github.com/ucsd-cse231-w21/pa1-Yiranwu/tree/main/images/4-6.png)
 
 ## 4.7 Recursive Function
 ```
@@ -201,7 +201,7 @@ countDown(10)
 ```
 
 
-![plot](https://github.com/ucsd-cse231-w21/pa1-Yiranwu/tree/main/images/4-7.png)
+![alt text](https://github.com/ucsd-cse231-w21/pa1-Yiranwu/tree/main/images/4-7.png)
 
 ## 4.8 Mutual calling
 ```
@@ -219,4 +219,4 @@ I:int=15
 countDownOne(I)
 ```
 
-![plot](https://github.com/ucsd-cse231-w21/pa1-Yiranwu/tree/main/images/4-8.png)
+![alt text](https://github.com/ucsd-cse231-w21/pa1-Yiranwu/tree/main/images/4-8.png)
