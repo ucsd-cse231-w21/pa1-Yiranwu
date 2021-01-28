@@ -21,32 +21,45 @@ if(typeof process !== "undefined") {
   };
 }
 
-export async function run(source : string, config: any) : Promise<number> {
+export async function run(source : string, config: any) : Promise<[any, compiler.Scope]> {
   const wabtInterface = await wabt();
   const parsed = parse(source);
   var returnType = "";
   var returnExpr = "";
-  const lastExpr = parsed[parsed.length - 1]
-  if(lastExpr.tag === "expr") {
+  if (parsed.body[parsed.body.length - 1]==undefined) {
     returnType = "(result i32)";
-    returnExpr = "(local.get $$last)"
+    returnExpr = "(i32.const 0)";
   }
-  const compiled = compiler.compile(source);
+  else {
+    if(parsed.body[parsed.body.length - 1].tag === "expr") {
+      returnType = "(result i32)";
+      returnExpr = "(local.get $$last)"
+    }
+  }
+  const compiled = compiler.compile(source, config.env);
   const importObject = config.importObject;
+  if(!importObject.js) {
+    const memory = new WebAssembly.Memory({initial:10, maximum:100});
+    importObject.js = { memory: memory };
+  }
   const wasmSource = `(module
     (func $print (import "imports" "print") (param i32) (result i32))
     (func $abs (import "imports" "abs") (param i32) (result i32))
     (func $max (import "imports" "max") (param i32) (param i32) (result i32))
     (func $min (import "imports" "min") (param i32) (param i32) (result i32))
     (func $pow (import "imports" "pow") (param i32) (param i32) (result i32))
+    (import "js" "memory" (memory 1))
+    ${compiled.funcCodes}
     (func (export "exported_func") ${returnType}
-      ${compiled.wasmSource}
+      ${compiled.myFuncCode}
       ${returnExpr}
     )
   )`;
+  console.log("full wat:\n", wasmSource)
+  //(func $printglobal (import "imports" "print_global_func") (param i32) (param i32))
   const myModule = wabtInterface.parseWat("test.wat", wasmSource);
   var asBinary = myModule.toBinary({});
   var wasmModule = await WebAssembly.instantiate(asBinary.buffer, importObject);
   const result = (wasmModule.instance.exports.exported_func as any)();
-  return result;
+  return [result, compiled.env.super];
 }
