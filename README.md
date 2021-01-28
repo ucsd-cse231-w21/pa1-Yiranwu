@@ -201,8 +201,6 @@ print(X)
 ```
 ![ScreenShot](images/4-6.png)
 
-Note: I use 0/1 representation for bools for simplicity. The string representation can be acquired by having some sort of convention about type representation in WASM (e.g. top 32-bit is 1), and then do post-processing in TypeScript before output to screen.
-
 ## 4.7 Recursive Function
 ```
 def countDown(X:int) -> int:

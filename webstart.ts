@@ -9,10 +9,14 @@ function webStart() {
     var importObject = {
       imports: {
         print: (arg : any) => {
-          console.log("Logging from WASM: ", arg);
+          let output=''
+          if(arg>1000000000)
+            output=((arg%1000000000)==1).toString()
+          else
+            output=(arg%1000000000).toString()
           const elt = document.createElement("pre");
           document.getElementById("output").appendChild(elt);
-          elt.innerText = arg;
+          elt.innerText = output;
           return arg;
         },
         abs: (arg : any) => {

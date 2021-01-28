@@ -363,7 +363,10 @@ function codeGenExpr(expr : Expr, env:Scope) : Array<string> {
         if (expr.args[0].type=='none')
           throw new Error(`printing none`)
         const argCode = codeGenExpr(expr.args[0], env)
-        return argCode.concat([`(call $print)`])
+        if (expr.args[0].type=='int')
+          return argCode.concat([`(call $print)`])
+        if (expr.args[0].type=='bool')
+          return argCode.concat([`(i32.const 1000000000)`,`(i32.add)`,`(call $print)`])
       }
       const func = env.getFunc(expr.name)
       if (func.argList.length != expr.args.length) {
