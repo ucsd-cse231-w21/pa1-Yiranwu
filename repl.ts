@@ -40,13 +40,17 @@ export class BasicREPL {
 
     switch(type) {
       case "int":
-        return NUM
+        //return NUM
+        return {tag:"number", str:source}
       case "bool":
-        return BOOL
+        //return BOOL
+        return {tag:'bool', str:source}
       case "none":
-        return NONE
+        //return NONE
+        return {tag:'none', str:source}
       default:
-        return CLASS(type)
+        //return CLASS(type)
+        return {tag:'class', name:source}
     }
   }
 
