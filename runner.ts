@@ -30,7 +30,6 @@ export async function run(source : string, config: any) : Promise<[Value, compil
   var returnType = "";
   var returnExpr = "";
   var type = 'none'
-  console.log(`at run: last stmt tag= ${parsed.body[parsed.body.length - 1].tag}`)
   if (parsed.body[parsed.body.length - 1]==undefined) {
     returnType = "(result i32)";
     returnExpr = "(i32.const 0)";
