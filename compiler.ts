@@ -531,7 +531,7 @@ function codeGenExpr(expr : Expr, env:Scope) : Array<string> {
           return argCode.concat([`(i32.const 0)`,`(call $print)`])
         }
         if (expr.args[0].type=='bool') {
-          return argCode.concat([`(i32.const 2)`,`(call $print)`])
+          return argCode.concat([`(i32.const 0)`,`(call $print)`])
         }
         const classNameIndex = env.classNameToIndex.get(expr.args[0].type)
         return argCode.concat([`(i32.const ${(classNameIndex<<1)+1})`, `(call $print)`])

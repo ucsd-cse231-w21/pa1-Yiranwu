@@ -3,6 +3,7 @@ import {parse} from './parser'
 import {Scope, compile} from "./compiler"
 import {Type, Value, Stmt} from './ast'
 import {NUM,BOOL,NONE,CLASS} from './utils'
+import { importObject } from "./tests/import-object.test";
 
 interface REPL {
   run(source : string) : Promise<any>;
@@ -43,7 +44,7 @@ export class BasicREPL {
       case "bool":
         return BOOL
       case "none":
-        return NONE
+        return {tag:'none', name:source}
       default:
         return CLASS(type)
     }

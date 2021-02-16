@@ -10,6 +10,7 @@ function webStart() {
       imports: {
         print: (typeEncoding:number, arg : any) => {
           let output=''
+          console.log(`typeEncoding=${typeEncoding}`)
           switch (typeEncoding) {
             case 0:
               output = arg
@@ -19,8 +20,10 @@ function webStart() {
               else output='True'
               break
             default:
+              console.log('default case')
               if (arg>0) output=repl.currentEnv.classIndexToName.get(typeEncoding>>1)
           }
+          console.log(`outputed ${output}`)
           const elt = document.createElement("pre");
           document.getElementById("output").appendChild(elt);
           elt.innerText = output;

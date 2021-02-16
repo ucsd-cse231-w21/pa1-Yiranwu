@@ -58,7 +58,7 @@ export type Value =
 export type Type =
     {tag: "number"}
   | {tag: "bool"}
-  | {tag: "none"}
+  | {tag: "none", name?:string}
   | {tag: "class", name: string}
 
 
