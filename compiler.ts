@@ -203,6 +203,7 @@ function codeGenVarDefInitialPass(def: VarDef, env:Scope) : VarEntry {
                            initValueSource: null}
   if (def.value!=null) {
     varEntry.initValueSource=codeGenLiteral(def.value, env)
+    checkIsType(def.value.type, def.type, "VarInit")
   }
   else {
     varEntry.isParam=true
