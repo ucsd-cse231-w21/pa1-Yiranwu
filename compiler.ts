@@ -261,8 +261,10 @@ function codeGenFuncDefFinalPass(funcEntry:FuncEntry, env:Scope): Array<string> 
   })
 
   let retString = ""
+  let returnCode = [`(return)`]
   if (funcEntry.type!='none') {
     retString = `(result i32)`
+    returnCode = [`(i32.const 0)`].concat(returnCode)
   }
   funcDefCode = funcDefCode.concat([`(func $${funcEntry.name} `.concat(argString).concat(retString)])
   funcDefCode = funcDefCode.concat([`(local $$last i32)`, ])
@@ -281,7 +283,7 @@ function codeGenFuncDefFinalPass(funcEntry:FuncEntry, env:Scope): Array<string> 
   })
   funcDefCode = funcDefCode.concat(varDefCodes).concat(varInitCodes).concat(modifyOffsetCode)
   const bodyCode = codeGenStmts(funcEntry.body, funcEnv)
-  funcDefCode = funcDefCode.concat(bodyCode).concat([`(return)`]).concat([`)`])
+  funcDefCode = funcDefCode.concat(bodyCode).concat(returnCode).concat([`)`])
   funcEntry.source = funcDefCode
   funcEnv.close()
   return funcDefCode
