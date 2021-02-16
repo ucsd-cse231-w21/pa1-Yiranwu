@@ -69,9 +69,10 @@ export async function run(source : string, config: any) : Promise<[Value, compil
   var asBinary = myModule.toBinary({});
   var wasmModule = await WebAssembly.instantiate(asBinary.buffer, importObject);
 
-  const result = (wasmModule.instance.exports.exported_func as any)();
+  let result = (wasmModule.instance.exports.exported_func as any)();
   console.log(`type=${type}`)
   console.log(`result=${result}`)
+  result=false
   switch(type) {
     case "int":
       return [PyValue(NUM,result), compiled.env.super]
