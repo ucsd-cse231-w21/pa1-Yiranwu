@@ -1,6 +1,6 @@
 import {run} from "./runner";
 import {parse} from './parser'
-import {Scope} from "./compiler"
+import {Scope, compile} from "./compiler"
 import {Type, Value, Stmt} from './ast'
 import {NUM,BOOL,NONE,CLASS} from './utils'
 
@@ -27,6 +27,7 @@ export class BasicREPL {
   }
   async tc(source: string): Promise<Type> {
     const ast = parse(source);
+    const compiled = compile(ast, this.currentEnv);
     
     var type = 'none'
     const stmt:Stmt = ast.body[ast.body.length - 1]

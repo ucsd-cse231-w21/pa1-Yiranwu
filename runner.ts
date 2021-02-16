@@ -26,9 +26,11 @@ if(typeof process !== "undefined") {
 export async function run(source : string, config: any) : Promise<[Value, compiler.Scope]> {
   const wabtInterface = await wabt();
   const parsed = parse(source);
+  const compiled = compiler.compile(parsed, config.env);
   var returnType = "";
   var returnExpr = "";
   var type = 'none'
+  console.log(`at run: last stmt tag= ${parsed.body[parsed.body.length - 1].tag}`)
   if (parsed.body[parsed.body.length - 1]==undefined) {
     returnType = "(result i32)";
     returnExpr = "(i32.const 0)";
@@ -38,11 +40,15 @@ export async function run(source : string, config: any) : Promise<[Value, compil
       returnType = "(result i32)";
       returnExpr = "(local.get $$last)"
       const stmt:Stmt = parsed.body[parsed.body.length - 1]
-      if (stmt.tag=='expr')
+      if (stmt.tag=='expr') {
+        console.log(`expr tag: ${stmt.expr.tag}, type:${stmt.expr.type}` )
+        if (stmt.expr.tag=='id') {
+          console.log (`idexpr, name=${stmt.expr.name}`)
+        }
         type = stmt.expr.type
+      }
     }
   }
-  const compiled = compiler.compile(source, config.env);
   const importObject = config.importObject;
   if(!importObject.js) {
     const memory = new WebAssembly.Memory({initial:2000, maximum:2000});
@@ -64,6 +70,8 @@ export async function run(source : string, config: any) : Promise<[Value, compil
   var wasmModule = await WebAssembly.instantiate(asBinary.buffer, importObject);
 
   const result = (wasmModule.instance.exports.exported_func as any)();
+  console.log(`type=${type}`)
+  console.log(`result=${result}`)
   switch(type) {
     case "int":
       return [PyValue(NUM,result), compiled.env.super]

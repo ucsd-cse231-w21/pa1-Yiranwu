@@ -124,8 +124,7 @@ export class Scope {
   }
 }
 
-export function compile(source: string, formerEnv: Scope) : CompileResult {
-  const program = parse(source);
+export function compile(program:Program, formerEnv: Scope) : CompileResult {
   const env = formerEnv;
   let myFuncCode:Array<string> = []
   let varDefCodes:string[] = [`(local $$last i32)`, `(local $CURRENTOFFSET i32)`]
@@ -210,6 +209,7 @@ function codeGenVarDefInitialPass(def: VarDef, env:Scope) : VarEntry {
   let varEntry:VarEntry = {name: def.name, type: def.type, address: address, isParam: false,
                            addressSource:[`(local.get $CURRENTOFFSET)`,`(i32.const ${address*4})`,`(i32.add)`],
                            initValueSource: null}
+  console.log(`varEntry created, name=${def.name}, type=${def.type}`)
   if (def.value!=null) {
     varEntry.initValueSource=codeGenLiteral(def.value, env)
   }
