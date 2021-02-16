@@ -134,7 +134,7 @@ export function compile(program:Program, formerEnv: Scope) : CompileResult {
   env.vars.forEach((varEntry, name) => {
     varDefCodes.push(`(local $${name} i32)`)
     varEntry.addressSource = []
-    varInitCodes=varInitCodes.concat([`(local.get $CURRENTOFFSET)`,`(i32.const ${varEntry.address*4})`,`(i32.load)`, `(local.set $${name})`])
+    varInitCodes=varInitCodes.concat([`(local.get $CURRENTOFFSET)`,`(i32.const ${varEntry.address*4})`,`(i32.add)`,`(i32.load)`, `(local.set $${name})`])
   })
   env.funcs.forEach((funcEntry, name) => {
     funcCodes = funcCodes.concat(funcEntry.source)
@@ -188,7 +188,6 @@ export function compile(program:Program, formerEnv: Scope) : CompileResult {
   })
   myFuncCode = myFuncCode.concat(bodyCode);
 
-  env.close()
   return {
     funcCodes: funcCodes.join("\n"),
     myFuncCode: myFuncCode.join("\n"),
@@ -608,7 +607,7 @@ function binOp2Wat(op:string) :string {
 
 function checkIsType(sourceType:string, targetType:string, errType: string) {
   if (sourceType!=targetType) {
-    if (sourceType=='none' && targetType!='int' && targetType!='bool')
+    if (sourceType=='none' && targetType!='int' && targetType!='bool' && targetType!='none')
       return
     else throw new Error(`Type Mismatch for ${errType}`)
   }

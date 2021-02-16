@@ -37,16 +37,16 @@ export class BasicREPL {
       }
     }
 
-  switch(type) {
-    case "int":
-      return NUM
-    case "bool":
-      return BOOL
-    case "none":
-      return NONE
-    default:
-      return CLASS(type)
-  }
+    switch(type) {
+      case "int":
+        return NUM
+      case "bool":
+        return BOOL
+      case "none":
+        return NONE
+      default:
+        return CLASS(type)
+    }
   }
 
 }

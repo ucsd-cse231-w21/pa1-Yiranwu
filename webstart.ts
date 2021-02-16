@@ -19,7 +19,7 @@ function webStart() {
               else output='True'
               break
             default:
-              if (arg>0) output=env.classIndexToName.get(typeEncoding>>1)
+              if (arg>0) output=repl.currentEnv.classIndexToName.get(typeEncoding>>1)
           }
           const elt = document.createElement("pre");
           document.getElementById("output").appendChild(elt);
@@ -40,7 +40,6 @@ function webStart() {
         },
       },
     };
-    const env:Scope = null;
     var repl = new BasicREPL(importObject);
 
     function renderResult(result : any) : void {
