@@ -51,9 +51,9 @@ export type TypedVar =
 
 export type Value =
     { tag: "none", str?:string}
-  | { tag: "bool", value: boolean}
-  | { tag: "num", value: number}
-  | { tag: "object", name: string, address: number}
+  | { tag: "bool", value: boolean, str?:string}
+  | { tag: "num", value: number, str?:string}
+  | { tag: "object", name: string, address: number, str?:string}
 
 export type Type =
     {tag: "number"}
