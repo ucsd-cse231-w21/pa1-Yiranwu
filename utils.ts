@@ -14,20 +14,20 @@ export function PyValue(typ: Type, result: number): Value {
 }
 
 export function PyInt(n: number): Value {
-  return { tag: "num", value: n};
+  return { tag: "num", value: n };
 }
 
 export function PyBool(b: boolean): Value {
-  return { tag: "bool", value: b};
+  return { tag: "bool", value: b };
 }
 
 export function PyObj(name: string, address: number): Value {
   if (address === 0) return PyNone();
-  else return { tag: "object", name, address};
+  else return { tag: "object", name, address };
 }
 
 export function PyNone(): Value {
-  return { tag: "none"};
+  return { tag: "none" };
 }
 
 export const NUM : Type = {tag: "number"};
