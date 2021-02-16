@@ -609,6 +609,6 @@ function checkIsType(sourceType:string, targetType:string, errType: string) {
   if (sourceType!=targetType) {
     if (sourceType=='none' && targetType!='int' && targetType!='bool' && targetType!='none')
       return
-    else throw new Error(`Type Mismatch for ${errType}`)
+    else throw new Error(`Type Mismatch for ${errType}, source=${sourceType}, target=${targetType}`)
   }
 }
