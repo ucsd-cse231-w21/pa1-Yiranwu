@@ -540,6 +540,8 @@ function codeGenExpr(expr : Expr, env:Scope) : Array<string> {
     //| { tag: "fieldquery", object: Expr, name: string, type:string}
     case "fieldquery":
       let fieldCode = codeGenExpr(expr.object, env)
+      if (expr.object.type=='none')
+        throw new Error('member of none is undefined')
       const fieldEntry = env.getClassMember(expr.object.type, expr.name)
       fieldCode=fieldCode.concat([`(i32.const ${fieldEntry.address*4})`, `(i32.add)`, `(i32.load)`])
       expr.type = fieldEntry.type
