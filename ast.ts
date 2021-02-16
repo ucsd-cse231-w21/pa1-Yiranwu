@@ -50,10 +50,10 @@ export type TypedVar =
   { name: string, type: string}
 
 export type Value =
-    { tag: "none" }
-  | { tag: "bool", value: boolean }
-  | { tag: "num", value: number }
-  | { tag: "object", name: string, address: number}
+    { tag: "none", str?:string }
+  | { tag: "bool", value: boolean,str?:string }
+  | { tag: "num", value: number,str?:string }
+  | { tag: "object", name: string, address: number, str?:string}
 
 export type Type =
     {tag: "number"}

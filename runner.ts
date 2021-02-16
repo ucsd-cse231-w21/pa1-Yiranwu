@@ -73,6 +73,17 @@ export async function run(source : string, config: any) : Promise<[Value, compil
   console.log(`result=${result}`)
   switch(type) {
     case "int":
+      return [PyValue(NUM,result, source), compiled.env]
+    case "bool":
+      return [PyValue(BOOL,result, source), compiled.env]
+    case "none":
+      return [PyValue(NONE,result, source), compiled.env]
+    default:
+      return [PyValue(CLASS(type),result, source), compiled.env]
+  }
+  /*
+  switch(type) {
+    case "int":
       return [PyValue(NUM,result), compiled.env]
     case "bool":
       return [PyValue(BOOL,result), compiled.env]
@@ -81,4 +92,5 @@ export async function run(source : string, config: any) : Promise<[Value, compil
     default:
       return [PyValue(CLASS(type),result), compiled.env]
   }
+  */
 }
