@@ -8,12 +8,19 @@ function webStart() {
   document.addEventListener("DOMContentLoaded", function() {
     var importObject = {
       imports: {
-        print: (arg : any) => {
+        print: (typeEncoding:number, arg : any) => {
           let output=''
-          if(arg>1000000000)
-            output=((arg%1000000000)==1).toString()
-          else
-            output=(arg%1000000000).toString()
+          switch (typeEncoding) {
+            case 0:
+              output = arg
+              break
+            case 2:
+              if (arg==0) output='False'
+              else output='True'
+              break
+            default:
+              if (arg>0) output=env.classIndexToName.get(typeEncoding>>1)
+          }
           const elt = document.createElement("pre");
           document.getElementById("output").appendChild(elt);
           elt.innerText = output;

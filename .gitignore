@@ -4,4 +4,6 @@ cli
 *.sw*
 *.js
 show*.ts
+*.wat
+*.wasm
 .DS_Store

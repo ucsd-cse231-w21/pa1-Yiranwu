@@ -3,17 +3,21 @@ export type Program = {defs: Def[], body: Stmt[]}
 export type Def = 
     {tag: "var", def: VarDef} 
   | {tag: "func", def: FuncDef}
+  | {tag: "class", def: ClassDef}
 
 export type VarDef = {name:string, type:string, value:Literal}
 
 export type FuncDef = {name: string, typed_args: TypedVar[], ret_type: string, body:FuncBody}
 // typed_args: 1 or more,  ret_type: optional
 
+export type ClassDef  = {name: string, defs: Def[]}
+
 export type FuncBody = {defs: VarDef[], body: Stmt[]}
 // defs: 0 or more, body: 1 or more
 
 export type Stmt =
     { tag: "assign", name: string, value: Expr }
+  | { tag: "fieldassign", object: Expr, name: string, value: Expr}
   | { tag: "expr", expr: Expr }
   // below are new
   | { tag: "if", cond: Expr, then_block: Stmt[], elif_block: Stmt[], else_block: Stmt[]}
@@ -32,6 +36,9 @@ export type Expr =
   | { tag: "unaryexpr", opd: Expr, op: string, type:string}
   | { tag: "callexpr", name:string, args: Expr[], type:string}
   | { tag: "literal", value: Literal, type:string}
+  | { tag: "classinit", name:string, type:string}
+  | { tag: "fieldquery", object: Expr, name: string, type:string}
+  | { tag: "methodcall", object: Expr, name:string, args:Expr[], type:string}
 
 
 export type Literal = 
@@ -41,5 +48,17 @@ export type Literal =
 
 export type TypedVar = 
   { name: string, type: string}
+
+export type Value =
+    { tag: "none" }
+  | { tag: "bool", value: boolean }
+  | { tag: "num", value: number }
+  | { tag: "object", name: string, address: number}
+
+export type Type =
+    {tag: "number"}
+  | {tag: "bool"}
+  | {tag: "none"}
+  | {tag: "class", name: string}
 
 

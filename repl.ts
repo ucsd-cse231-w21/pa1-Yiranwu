@@ -12,7 +12,7 @@ export class BasicREPL {
   constructor(importObject : any) {
     this.importObject = importObject;
     if(!importObject.js) {
-      const memory = new WebAssembly.Memory({initial:10, maximum:20});
+      const memory = new WebAssembly.Memory({initial:2000, maximum:2000});
       this.importObject.js = { memory: memory };
     }
     this.currentEnv = new Scope(null, "__super__");
