@@ -308,7 +308,7 @@ export function traverseTypedVar(c : TreeCursor, s : string) : TypedVar {
     if (c.type.name == "TypeDef") {
       c.firstChild()
       c.nextSibling()
-      const type = s.substring(c.from, c.to)
+      const type = s.substring(c.from, c.to).trim()
       c.parent()
       return {name:name, type:type}
     }
@@ -367,7 +367,7 @@ export function traverseVarDef(c: TreeCursor, s:string) : VarDef {
   c.firstChild()
   const name = s.substring(c.from, c.to)
   c.nextSibling()
-  const type = s.substring(c.from+1, c.to)
+  const type = s.substring(c.from+1, c.to).trim()
   c.nextSibling()
   c.nextSibling()
   const literal = traverseLiteral(c, s)
@@ -462,7 +462,7 @@ export function traverseFuncDef(c : TreeCursor, s : string, className: string=''
       let returnType = 'none'
       if (c.type.name=='TypeDef') {
         c.firstChild() // type
-        returnType=s.substring(c.from, c.to)
+        returnType=s.substring(c.from, c.to).trim()
         c.parent()
       }
       c.nextSibling()
