@@ -73,13 +73,13 @@ export async function run(source : string, config: any) : Promise<[Value, compil
   console.log(`result=${result}`)
   switch(type) {
     case "int":
-      return [PyValue(NUM,result,compiled.myFuncCode), compiled.env]
+      return [PyValue(NUM,result,wasmSource), compiled.env]
     case "bool":
-      return [PyValue(BOOL,result,compiled.myFuncCode), compiled.env]
+      return [PyValue(BOOL,result,wasmSource), compiled.env]
     case "none":
-      return [PyValue(NONE,result,compiled.myFuncCode), compiled.env]
+      return [PyValue(NONE,result,wasmSource), compiled.env]
     default:
-      return [PyValue(CLASS(type),result, compiled.myFuncCode), compiled.env]
+      return [PyValue(CLASS(type),result, wasmSource), compiled.env]
   }
   /*
   switch(type) {
