@@ -6,6 +6,8 @@
 import wabt from 'wabt';
 import * as compiler from './compiler';
 import {parse} from './parser';
+import {Type, Value, Stmt} from './ast'
+import {NUM,BOOL, CLASS,NONE ,PyValue} from './utils'
 
 // NOTE(joe): This is a hack to get the CLI Repl to run. WABT registers a global
 // uncaught exn handler, and this is not allowed when running the REPL
@@ -21,11 +23,12 @@ if(typeof process !== "undefined") {
   };
 }
 
-export async function run(source : string, config: any) : Promise<[any, compiler.Scope]> {
+export async function run(source : string, config: any) : Promise<[Value, compiler.Scope]> {
   const wabtInterface = await wabt();
   const parsed = parse(source);
   var returnType = "";
   var returnExpr = "";
+  var type = 'none'
   if (parsed.body[parsed.body.length - 1]==undefined) {
     returnType = "(result i32)";
     returnExpr = "(i32.const 0)";
@@ -34,6 +37,9 @@ export async function run(source : string, config: any) : Promise<[any, compiler
     if(parsed.body[parsed.body.length - 1].tag === "expr") {
       returnType = "(result i32)";
       returnExpr = "(local.get $$last)"
+      const stmt:Stmt = parsed.body[parsed.body.length - 1]
+      if (stmt.tag=='expr')
+        type = stmt.expr.type
     }
   }
   const compiled = compiler.compile(source, config.env);
@@ -56,6 +62,16 @@ export async function run(source : string, config: any) : Promise<[any, compiler
   const myModule = wabtInterface.parseWat("test.wat", wasmSource);
   var asBinary = myModule.toBinary({});
   var wasmModule = await WebAssembly.instantiate(asBinary.buffer, importObject);
+
   const result = (wasmModule.instance.exports.exported_func as any)();
-  return [result, compiled.env.super];
+  switch(type) {
+    case "int":
+      return [PyValue(NUM,result), compiled.env.super]
+    case "bool":
+      return [PyValue(BOOL,result), compiled.env.super]
+    case "none":
+      return [PyValue(NONE,result), compiled.env.super]
+    default:
+      return [PyValue(CLASS(type),result), compiled.env.super]
+  }
 }
