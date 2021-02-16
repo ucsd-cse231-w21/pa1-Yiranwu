@@ -77,8 +77,7 @@ export async function run(source : string, config: any) : Promise<[Value, compil
 (i32.const 0)
 (i32.add)
 (i32.store)
-)
-)`
+`
   let wasmSource = `(module
     (func $print (import "imports" "print") (param i32) (param i32) (result i32) )
     (import "js" "memory" (memory 1))
