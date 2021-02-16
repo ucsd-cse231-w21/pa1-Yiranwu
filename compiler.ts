@@ -18,7 +18,8 @@ type VarEntry = {
   address: number,
   isParam: boolean,
   addressSource: string[],
-  initValueSource: string[]
+  initValueSource: string[],
+  inited: boolean
 }
 
 type FuncEntry = {
@@ -200,7 +201,7 @@ function codeGenVarDefInitialPass(def: VarDef, env:Scope) : VarEntry {
   env.memoryCounter += 1
   let varEntry:VarEntry = {name: def.name, type: def.type, address: address, isParam: false,
                            addressSource:[`(local.get $CURRENTOFFSET)`,`(i32.const ${address*4})`,`(i32.add)`],
-                           initValueSource: null}
+                           initValueSource: null, inited: false}
   if (def.value!=null) {
     varEntry.initValueSource=codeGenLiteral(def.value, env)
     checkIsType(def.value.type, def.type, "VarInit")
@@ -223,7 +224,7 @@ function codeGenMemberDefInitialPass(def: VarDef, members: Map<string, VarEntry>
   //@ts-ignore
   const varEntry = {name: def.name, type: def.type, address: address, isParam:false,
                     addressSource:[`(local.get $CURRENTOFFSET)`,`(i32.const ${address*4})`,`(i32.add)`],
-                    initValueSource:codeGenLiteral(def.value, null)}
+                    initValueSource:codeGenLiteral(def.value, null), inited:false}
   members.set(def.name, varEntry)
   return varEntry
 }
@@ -383,6 +384,8 @@ function codeGenStmt(stmt: Stmt, env:Scope) : Array<string> {
       let lvalue = env.getVar(stmt.name)
       let valCode = codeGenExpr(stmt.value, env)
       checkIsType(stmt.value.type, lvalue.type, "assign statement")
+      if (!isBasicType(lvalue.type))
+        lvalue.inited=true
       return [`(local.get $${stmt.name})`].concat(valCode).concat(`(i32.store)`);
     //{ tag: "fieldassign", object: Expr, name: string, value: Expr}
     case "fieldassign":
@@ -550,6 +553,8 @@ function codeGenExpr(expr : Expr, env:Scope) : Array<string> {
       let fieldCode = codeGenExpr(expr.object, env)
       if (expr.object.type=='none')
         throw new Error('member of none is undefined')
+      if (expr.object.tag=='id' && !env.getVar(expr.object.name).inited)
+        throw new Error(`field query for none`)
       const fieldEntry = env.getClassMember(expr.object.type, expr.name)
       fieldCode=fieldCode.concat([`(i32.const ${fieldEntry.address*4})`, `(i32.add)`, `(i32.load)`])
       expr.type = fieldEntry.type
