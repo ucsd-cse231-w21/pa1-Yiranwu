@@ -9,7 +9,7 @@ export function PyValue(typ: Type, result: number): Value {
     case "class":
       return PyObj(typ.name, result);
     case "none":
-      return PyNone;
+      return PyNone();
   }
 }
 
