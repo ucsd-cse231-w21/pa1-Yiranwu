@@ -7,7 +7,7 @@ export function PyValue(typ: Type, result: number, str:string=''): Value {
     case "bool":
       return PyBool(Boolean(result),str);
     case "class":
-      return PyObj(typ.name, result,srt);
+      return PyObj(typ.name, result,str);
     case "none":
       return PyNone(str);
   }
