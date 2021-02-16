@@ -44,7 +44,7 @@ export class BasicREPL {
       case "bool":
         return BOOL
       case "none":
-        return {tag:'none', name:source}
+        return NONE
       default:
         return CLASS(type)
     }
