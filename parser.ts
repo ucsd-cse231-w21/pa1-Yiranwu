@@ -280,7 +280,9 @@ export function traverseStmt(c : TreeCursor, s : string) : Stmt {
     case "ReturnStatement":
       c.firstChild()
       let returnValue:Expr = {tag: "literal", value: {tag:"none", type:null}, type:null}
-      if(c.nextSibling()) {
+      c.nextSibling()
+      if(c.type.name.length>1) {
+        console.log(`traverseStatement ReturnStatement: going to traverseExpr :|${s.substring(c.from,c.to)}|` )
         returnValue = traverseExpr(c, s)
       }
       c.parent()
