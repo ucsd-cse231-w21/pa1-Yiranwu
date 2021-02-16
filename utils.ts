@@ -1,33 +1,33 @@
 import { Value, Type } from "./ast";
 
-export function PyValue(typ: Type, result: number, str:string=''): Value {
+export function PyValue(typ: Type, result: number): Value {
   switch (typ.tag) {
     case "number":
-      return PyInt(result,str);
+      return PyInt(result);
     case "bool":
-      return PyBool(Boolean(result),str);
+      return PyBool(Boolean(result));
     case "class":
-      return PyObj(typ.name, result,str);
+      return PyObj(typ.name, result);
     case "none":
-      return PyNone(str);
+      return PyNone;
   }
 }
 
-export function PyInt(n: number,str:string=''): Value {
-  return { tag: "num", value: n, str:str};
+export function PyInt(n: number): Value {
+  return { tag: "num", value: n};
 }
 
-export function PyBool(b: boolean,str:string=''): Value {
-  return { tag: "bool", value: b,str:str};
+export function PyBool(b: boolean): Value {
+  return { tag: "bool", value: b};
 }
 
-export function PyObj(name: string, address: number,str:string=''): Value {
-  if (address === 0) return PyNone(str);
-  else return { tag: "object", name, address,str:str};
+export function PyObj(name: string, address: number): Value {
+  if (address === 0) return PyNone();
+  else return { tag: "object", name, address};
 }
 
-export function PyNone(str:string=''): Value {
-  return { tag: "none", str:str};
+export function PyNone(): Value {
+  return { tag: "none"};
 }
 
 export const NUM : Type = {tag: "number"};
