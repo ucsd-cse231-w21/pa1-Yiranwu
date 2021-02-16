@@ -521,13 +521,18 @@ function codeGenExpr(expr : Expr, env:Scope) : Array<string> {
       if (expr.name=='print') {
         if(expr.args.length>1)
           throw new Error(`calling print with multiple args, expected 1`)
-        if (expr.args[0].type=='none')
+        if (expr.args[0].type=='none') {
+          expr.type='none'
           return []
+        }
         const argCode = codeGenExpr(expr.args[0], env)
-        if (expr.args[0].type=='int')
+        expr.type = expr.args[0].type
+        if (expr.args[0].type=='int') {
           return argCode.concat([`(i32.const 0)`,`(call $print)`])
-        if (expr.args[0].type=='bool')
+        }
+        if (expr.args[0].type=='bool') {
           return argCode.concat([`(i32.const 2)`,`(call $print)`])
+        }
         const classNameIndex = env.classNameToIndex.get(expr.args[0].type)
         return argCode.concat([`(i32.const ${(classNameIndex<<1)+1})`, `(call $print)`])
       }
