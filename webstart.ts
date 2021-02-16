@@ -24,7 +24,7 @@ function webStart() {
           const elt = document.createElement("pre");
           document.getElementById("output").appendChild(elt);
           elt.innerText = output;
-          return arg;
+          return output;
         },
         abs: (arg : any) => {
           return Math.abs(arg);
