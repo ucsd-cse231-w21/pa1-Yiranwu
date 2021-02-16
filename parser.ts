@@ -302,9 +302,11 @@ export function traverseStmt(c : TreeCursor, s : string) : Stmt {
 }
 
 export function traverseTypedVar(c : TreeCursor, s : string) : TypedVar {
+  console.log(`traverseTypedVar: ${s.substring(c.from, c.to)}`)
   if (c.node.type.name=="VariableName" || "self") {
     const name = s.substring(c.from, c.to);
     c.nextSibling();
+    console.log(`traverseTypedVar, nextSibling: ${s.substring(c.from, c.to)}`)
     if (c.type.name == "TypeDef") {
       c.firstChild()
       c.nextSibling()
@@ -313,7 +315,7 @@ export function traverseTypedVar(c : TreeCursor, s : string) : TypedVar {
       return {name:name, type:type}
     }
     else {
-      throw new Error("TypedVar has invalid type")
+      throw new Error(`TypedVar has invalid type |${c.node.type.name}|`)
     }
   }
   else {
@@ -346,11 +348,13 @@ function traverseTypedArgList(c : TreeCursor, s : string) : TypedVar[] {
   c.firstChild()
   c.nextSibling()
   if (s.substring(c.from, c.to) != ')') {
+    console.log(`traverseTypedArgList: found typedvar:${s.substring(c.from, c.to)}`)
     argList.push(traverseTypedVar(c, s))
     c.nextSibling()
     //@ts-ignore
     while(c.type.name == ",") {
       c.nextSibling()
+      console.log(`traverseTypedArgList: found typedvar:${s.substring(c.from, c.to)}`)
       argList.push(traverseTypedVar(c, s))
       c.nextSibling()
     }
