@@ -53,12 +53,27 @@ export async function run(source : string, config: any) : Promise<[Value, compil
     const memory = new WebAssembly.Memory({initial:2000, maximum:2000});
     importObject.js = { memory: memory };
   }
-  const wasmSource = `(module
+  const testCode = `    (func (export "exported_func") (result i32)
+  (local $$last i32)
+(local $CURRENTOFFSET i32)
+  (i32.const 0)
+)
+)`
+  let wasmSource = `(module
     (func $print (import "imports" "print") (param i32) (param i32) (result i32) )
     (import "js" "memory" (memory 1))
     ${compiled.funcCodes}
     (func (export "exported_func") ${returnType}
       ${compiled.myFuncCode}
+      ${returnExpr}
+    )
+  )`;
+  wasmSource = `(module
+    (func $print (import "imports" "print") (param i32) (param i32) (result i32) )
+    (import "js" "memory" (memory 1))
+    ${compiled.funcCodes}
+    (func (export "exported_func") ${returnType}
+      ${testCode}
       ${returnExpr}
     )
   )`;
