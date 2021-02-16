@@ -439,9 +439,7 @@ function codeGenStmt(stmt: Stmt, env:Scope) : Array<string> {
     //    | <expr>
     case "expr":
       let exprCode = codeGenExpr(stmt.expr, env);
-      if (stmt.expr.type!='none')
-        return exprCode.concat([`(local.set $$last)`]);
-      else return exprCode
+      return exprCode.concat([`(local.set $$last)`]);
     default:
       //@ts-ignore
       console.log(`unrecognized stmt, tag: ${stmt.tag}`)
