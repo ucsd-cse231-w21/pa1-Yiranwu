@@ -72,7 +72,6 @@ export async function run(source : string, config: any) : Promise<[Value, compil
   let result = (wasmModule.instance.exports.exported_func as any)();
   console.log(`type=${type}`)
   console.log(`result=${result}`)
-  result=false
   switch(type) {
     case "int":
       return [PyValue(NUM,result), compiled.env.super]
