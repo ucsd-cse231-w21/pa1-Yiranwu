@@ -130,8 +130,6 @@ export function compile(program:Program, formerEnv: Scope) : CompileResult {
   let varDefCodes:string[] = [`(local $$last i32)`, `(local $CURRENTOFFSET i32)`]
   let varInitCodes:string[] = []
   let funcCodes:string[] = []
-  console.log("trying to add former defined vars and funcs")
-  console.log(`former env name: ${formerEnv.name}, nvars=${formerEnv.vars.size}, nfuncs=${formerEnv.funcs.size}`)
   varInitCodes = varInitCodes.concat([`(i32.const 0)`, `(i32.load)`, `(local.set $CURRENTOFFSET)`])
   env.vars.forEach((varEntry, name) => {
     varDefCodes.push(`(local $${name} i32)`)
@@ -182,18 +180,13 @@ export function compile(program:Program, formerEnv: Scope) : CompileResult {
 
   myFuncCode = myFuncCode.concat(varDefCodes).concat(setGlobaOffsetCode).concat(varInitCodes).concat(modifyOffsetCode)
 
-  console.log(`at env ${env.name}, before codeGenBody, trying to save vars, num=${env.vars.size}`)
   let bodyCode = codeGenStmts(program.body, env);
-  console.log(`at env ${env.name}, after codeGenBody, trying to save vars, num=${env.vars.size}`)
   //!!!!!!!!!
   env.vars.forEach((varEntry, name) => {
     bodyCode = bodyCode.concat([`(i32.const 0)`,`(i32.load)`,`(i32.const ${varEntry.address*4})`, `(i32.add)`,
                                 `(local.get $${name})`, `(i32.store)`])
   })
   myFuncCode = myFuncCode.concat(bodyCode);
-  console.log("Generated: ", myFuncCode.join("\n"));
-  console.debug('---------')
-  console.log("funcCodes: ", funcCodes.join('\n'))
 
   env.close()
   return {
@@ -209,7 +202,6 @@ function codeGenVarDefInitialPass(def: VarDef, env:Scope) : VarEntry {
   let varEntry:VarEntry = {name: def.name, type: def.type, address: address, isParam: false,
                            addressSource:[`(local.get $CURRENTOFFSET)`,`(i32.const ${address*4})`,`(i32.add)`],
                            initValueSource: null}
-  console.log(`varEntry created, name=${def.name}, type=${def.type}`)
   if (def.value!=null) {
     varEntry.initValueSource=codeGenLiteral(def.value, env)
   }
@@ -221,11 +213,8 @@ function codeGenVarDefInitialPass(def: VarDef, env:Scope) : VarEntry {
 }
 
 function codeGenVarDefFinalPass(varEntry: VarEntry, env:Scope) : Array<string> {
-  console.log(`addressSource: ${varEntry.addressSource}`)
-  console.log(`initValSource: ${varEntry.initValueSource}`)
   let varDefCode:string[] = varEntry.addressSource.concat(varEntry.initValueSource).concat([`(i32.store)`])
   varDefCode = varDefCode.concat(varEntry.addressSource.concat([`(local.set $${varEntry.name})`]))
-  //console.log(`adding var ${varEntry.name} to env ${env.name}`)
   return varDefCode
 }
 
@@ -265,7 +254,6 @@ function codeGenFuncDefInitialPass(def:FuncDef, env:Scope): FuncEntry {
 }
 
 function codeGenFuncDefFinalPass(funcEntry:FuncEntry, env:Scope): Array<string> {
-  console.log(`codeGenFuncDefFinal: name:${funcEntry.name}`)
   let funcDefCode:string[] = [];
   let argString:string = ""
   const funcEnv = funcEntry.env
@@ -284,8 +272,6 @@ function codeGenFuncDefFinalPass(funcEntry:FuncEntry, env:Scope): Array<string> 
   //funcEntry.argList.forEach(argEntry => {
   //  varInitCodes.push(`(local.set $${argEntry.name})`)
   //})
-  console.log(`codeGenFuncDef: ${funcEntry.name}`)
-  console.log(`funcInitCode: ${funcDefCode}`)
   const modifyOffsetCode:string[] = [`(i32.const 0)`, `(i32.const 0)`, `(i32.load)`, `(i32.const ${funcEnv.vars.size*4})`,
                                      `(i32.add)`, `(i32.store)`]
   funcEntry.vars.forEach((varEntry, name) => {
@@ -293,15 +279,9 @@ function codeGenFuncDefFinalPass(funcEntry:FuncEntry, env:Scope): Array<string> 
       varDefCodes.push(`(local $${varEntry.name} i32)`)
     const varInitCode = codeGenVarDefFinalPass(varEntry, funcEnv)
     varInitCodes = varInitCodes.concat(varInitCode)
-    console.log(`singlevarInitCode: ${name}: ${varInitCode}`)
   })
   funcDefCode = funcDefCode.concat(varDefCodes).concat(varInitCodes).concat(modifyOffsetCode)
-  console.log(`varDefCode: ${varDefCodes}`)
-  console.log(`varInitCode: ${varInitCodes}`)
-  console.log(`modifyoffsetCode: ${modifyOffsetCode}`)
-  console.log(`varDefCode: ${varDefCodes}`)
   const bodyCode = codeGenStmts(funcEntry.body, funcEnv)
-  console.log(`bodyCode: ${bodyCode}`)
   funcDefCode = funcDefCode.concat(bodyCode).concat([`(return)`]).concat([`)`])
   funcEntry.source = funcDefCode
   funcEnv.close()
@@ -309,7 +289,6 @@ function codeGenFuncDefFinalPass(funcEntry:FuncEntry, env:Scope): Array<string> 
 }
 
 function codeGenMemberFuncDefInitialPass(classdef: ClassDef, def: FuncDef, env:Scope) : FuncEntry {
-  console.log(`codeGenMemberFuncDef: name: ${def.name}`)
   if (def.typed_args.length<1 || def.typed_args[0].name!='self' || def.typed_args[0].type!=classdef.name)
     throw new Error("Invalid argument list for member function definition")
   def.name = `${classdef.name}${def.name}`
@@ -329,7 +308,6 @@ function codeGenInitFuncDefInitialPass(def:FuncDef, env:Scope): FuncEntry {
 }
 
 function codeGenInitFuncDefFinalPass(funcEntry: FuncEntry, env:Scope) : Array<string> {
-  console.log(`codeGenInitFuncDefFinal: name:${funcEntry.name}`)
   let funcDefCode:string[] = [];
   const funcEnv = funcEntry.env
   const argString = `(param $self i32)`
@@ -344,11 +322,9 @@ function codeGenInitFuncDefFinalPass(funcEntry: FuncEntry, env:Scope) : Array<st
     if (name!='self') {
       let varCode = varEntry.addressSource
       varCode = varCode.concat(varEntry.initValueSource).concat(`(i32.store)`)
-      console.log(`codeGenInitFuncVarcode: varname: ${name}: ${varCode}`)
       varCodes = varCodes.concat(varCode)
     }
   })
-  console.log(`codeGenInitFuncVarcodes: ${varCodes}`)
   funcDefCode = funcDefCode.concat(varCodes).concat(modifyOffsetCode)
   funcDefCode = funcDefCode.concat([`(local.get $self)`, `(return)`]).concat([`)`])
   funcEntry.source = funcDefCode
@@ -393,18 +369,12 @@ function codeGenStmts(stmts: Stmt[], env:Scope) : Array<string> {
   let stmtsCode:string[] = []
   stmts.forEach(stmt => {
     const stmtCode = codeGenStmt(stmt, env)
-    console.log(`stmt tag:${stmt.tag}: ${stmtCode}`)
     stmtsCode = stmtsCode.concat(stmtCode)
-  })
-  console.log(`no stmts! all stmts:${stmts.length}`)
-  stmts.forEach (stmt => {
-    console.log(`codeGenStmts: one stmt had tag ${stmt.tag}`)
   })
   return stmtsCode
 }
 
 function codeGenStmt(stmt: Stmt, env:Scope) : Array<string> {
-  console.log(`codeGenStmt tag=${stmt.tag}`)
   switch(stmt.tag) {
     //stmt := <name> = <expr>
     case "assign":
@@ -473,20 +443,16 @@ function codeGenStmt(stmt: Stmt, env:Scope) : Array<string> {
 }
 
 function codeGenExpr(expr : Expr, env:Scope) : Array<string> {
-  console.log(`codeGenExpr tag=${expr.tag}`)
   switch(expr.tag) {
     //expr := <literal>
     case "literal":
       const literalCode = codeGenLiteral(expr.value, env)
       expr.type = expr.value.type
-      console.log(`codegenexpr at literal: opd1 type=${expr.type}`)
       return literalCode
     //    | <name>
     case "id":
-      console.log(`codeGenExpr for tag id: env:${env.name}`)
       const varEntry = env.getVar(expr.name)
       expr.type = varEntry.type
-      console.log(`codegenexpr at id: name=${expr.name}, type=${expr.type}`)
       return [`(local.get $${expr.name})`, `(i32.load)`];
     //    | <uniop> <expr>
     //      uniop := not | -
@@ -542,7 +508,6 @@ function codeGenExpr(expr : Expr, env:Scope) : Array<string> {
           else {
             result = (type1 == type2)
           }
-          console.log(`is return value: ${result}`)
           return codeGenLiteral({tag:"bool", value:result, type:"bool"}, env)
         default:
           throw new Error ("unrecognized binop")
@@ -579,7 +544,6 @@ function codeGenExpr(expr : Expr, env:Scope) : Array<string> {
       const fieldEntry = env.getClassMember(expr.object.type, expr.name)
       fieldCode=fieldCode.concat([`(i32.const ${fieldEntry.address*4})`, `(i32.add)`, `(i32.load)`])
       expr.type = fieldEntry.type
-      console.log(`fieldqueryExpr code:${fieldCode}`)
       return fieldCode
     //| { tag: "methodcall", object: Expr, name:string, args:Expr[], type:string}
     case "methodcall":
