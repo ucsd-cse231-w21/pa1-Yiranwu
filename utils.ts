@@ -27,7 +27,7 @@ export function PyObj(name: string, address: number): Value {
 }
 
 export function PyNone(str:string=''): Value {
-  return { tag: "none"};
+  return { tag: "none", str:str};
 }
 
 export const NUM : Type = {tag: "number"};
