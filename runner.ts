@@ -54,7 +54,9 @@ export async function run(source : string, config: any) : Promise<[Value, compil
     importObject.js = { memory: memory };
   }
   const wasmSource = `(module
-    (func $print (import "imports" "print") (param i32) (param i32) (result i32) )
+    (func $print_num (import "imports" "print_num") (param i32) (result i32) )
+    (func $print_bool (import "imports" "print_bool") (param i32) (result i32) )
+    (func $print (import "imports" "print") (param i32) (result i32) )
     (import "js" "memory" (memory 1))
     ${compiled.funcCodes}
     (func (export "exported_func") ${returnType}

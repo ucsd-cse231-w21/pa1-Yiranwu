@@ -534,13 +534,13 @@ function codeGenExpr(expr : Expr, env:Scope) : Array<string> {
         const argCode = codeGenExpr(expr.args[0], env)
         expr.type = expr.args[0].type
         if (expr.args[0].type=='int') {
-          return argCode.concat([`(i32.const 0)`,`(call $print)`])
+          return argCode.concat([`(call $print_num)`])
         }
         if (expr.args[0].type=='bool') {
-          return argCode.concat([`(i32.const 0)`,`(call $print)`])
+          return argCode.concat([`(call $print_bool)`])
         }
         const classNameIndex = env.classNameToIndex.get(expr.args[0].type)
-        return argCode.concat([`(i32.const ${(classNameIndex<<1)+1})`, `(call $print)`])
+        return argCode.concat([`(call $print)`])
       }
       else
         throw new Error("Function not supported")
